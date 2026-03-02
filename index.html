@@ -6,24 +6,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0a0a0f">
 <title>交番シフト一覧</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 :root{--bg:#0a0a0f;--s1:#151520;--s2:#1c1c2c;--bd:#2a2a3e;--tx:#e0e0ec;--dm:#6a6a7e;--ac:#4a9eff;--gn:#4ade80;--or:#fb923c;--rd:#f87171;--pr:#a78bfa;--yw:#fbbf24}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100dvh}
-
-/* === HEADER === */
 header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:12px 16px 8px}
 header h1{font-size:17px;font-weight:700}
 header .sub{font-size:11px;color:var(--dm);margin-top:2px}
-
-/* === TABS === */
 .tabs{display:flex;border-bottom:1px solid var(--bd)}
 .tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;color:var(--dm);cursor:pointer;border-bottom:2px solid transparent;background:none}
 .tab.on{color:var(--ac);border-bottom-color:var(--ac)}
 .page{display:none;padding-bottom:60px}.page.on{display:block}
-
-/* === COMMON === */
 .sec{font-size:12px;color:var(--dm);padding:14px 16px 6px;letter-spacing:.03em}
 .box{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--dm);line-height:1.6;margin:0 16px 8px}
 .pnl{padding:8px 16px;display:flex;flex-direction:column;gap:8px}
@@ -32,33 +25,30 @@ header .sub{font-size:11px;color:var(--dm);margin-top:2px}
 .inp{flex:1;background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:8px;padding:8px 10px;font-size:15px;font-family:inherit;outline:none}
 .inp:focus{border-color:var(--ac)}
 textarea.inp{resize:vertical;min-height:80px;font-size:13px;line-height:1.5}
-.btn{background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:opacity .15s;width:100%}
+.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;touch-action:manipulation}
 .btn:active{opacity:.7}
 .btn.g2{background:var(--s2);border:1px solid var(--bd);color:var(--tx)}
-.btn.sm{padding:7px 12px;font-size:12px;width:auto}
+.btn.sm{padding:7px 12px;font-size:12px}
 .btn.warn{background:var(--or)}
-.btn.green{background:#059669}
+.btn.full{width:100%}
 .hidden{display:none}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:10px 20px;border-radius:8px;font-size:13px;z-index:300;opacity:0;transition:opacity .3s}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:10px 20px;border-radius:8px;font-size:13px;z-index:300;pointer-events:none;opacity:0;transition:opacity .3s}
 .toast.show{opacity:1}
-
-/* === MEMBER LIST === */
 .ml{padding:8px 16px;display:flex;flex-direction:column;gap:4px}
 .mi{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:8px 12px}
 .mi .nm{font-size:14px;font-weight:600;min-width:60px}
 .mi .info{font-size:11px;color:var(--dm);flex:1}
-.mi button{background:none;border:none;cursor:pointer;padding:4px;font-size:14px}
+.mi button{background:none;border:none;cursor:pointer;padding:4px;font-size:14px;color:var(--dm);touch-action:manipulation}
 .mi .x{color:var(--rd);font-size:18px}
-
-/* === PATTERN CHIPS === */
-.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
 .chip{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
 .c-tom{background:rgba(251,146,60,.15);color:var(--or)}
 .c-nik{background:rgba(74,158,255,.1);color:var(--ac)}
 .c-rst{background:rgba(74,222,128,.12);color:var(--gn)}
 .c-yob{background:rgba(251,191,36,.12);color:var(--yw)}
-
-/* === ROSTER TABLE === */
+.add-row{display:flex;gap:6px;padding:8px 16px;align-items:center;flex-wrap:wrap}
+.add-row .inp{width:64px;flex:none;text-align:center}
+.add-row select,.sel-sm{background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:8px;padding:6px 8px;font-size:13px;font-family:inherit;-webkit-appearance:none;appearance:none}
 .roster-wrap{overflow-x:auto;padding:8px;-webkit-overflow-scrolling:touch}
 .roster{border-collapse:collapse;font-size:11px;min-width:100%}
 .roster th,.roster td{border:1px solid var(--bd);padding:3px 2px;text-align:center;white-space:nowrap}
@@ -67,7 +57,7 @@ textarea.inp{resize:vertical;min-height:80px;font-size:13px;line-height:1.5}
 .roster .dow-row th{font-size:10px;padding:2px;color:var(--dm)}
 .roster .dow-row .sun{color:var(--rd)}.roster .dow-row .sat{color:var(--ac)}
 .roster .name-cell{position:sticky;left:0;z-index:1;background:var(--s1);font-weight:600;font-size:12px;min-width:56px;max-width:72px;padding:4px 6px}
-.roster td{min-width:28px;font-weight:700;font-size:12px;cursor:pointer;transition:background .1s}
+.roster td{min-width:28px;font-weight:700;font-size:12px;cursor:pointer;touch-action:manipulation}
 .roster td:active{background:var(--s2)}
 .roster td.work{color:var(--ac)}
 .roster td.ake{color:var(--or)}
@@ -77,74 +67,56 @@ textarea.inp{resize:vertical;min-height:80px;font-size:13px;line-height:1.5}
 .roster td.sun-col{background:rgba(248,113,113,.04)}
 .roster td.sat-col{background:rgba(74,158,255,.04)}
 .roster .today-col{background:rgba(74,158,255,.1)!important}
-
-/* === MODAL === */
 .mo{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:flex-end;justify-content:center}
 .mo-in{background:var(--s1);border-radius:16px 16px 0 0;width:100%;max-width:480px;padding:20px 16px 32px;max-height:70dvh;overflow-y:auto}
 .mo h3{font-size:15px;font-weight:700;margin-bottom:12px}
 .mo-os{display:flex;flex-direction:column;gap:6px}
-.mo-o{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:12px;font-size:15px;font-weight:600;cursor:pointer;text-align:center;font-family:inherit;color:var(--tx)}
+.mo-o{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:12px;font-size:15px;font-weight:600;cursor:pointer;text-align:center;font-family:inherit;color:var(--tx);touch-action:manipulation}
 .mo-o:active{background:var(--bd)}
 .mo-o.sel{border-color:var(--ac);color:var(--ac)}
-
-/* === PRINT === */
+.empty{text-align:center;padding:40px 20px;color:var(--dm);font-size:14px;line-height:1.8}
+.empty .ic{font-size:40px;margin-bottom:12px;opacity:.5}
+.print-title{display:none}
 @media print{
   body{background:#fff;color:#000;font-size:9px}
-  header,.tabs,.page:not(.on),.no-print{display:none!important}
+  header,.tabs,.page:not(.on),.no-print,.toast{display:none!important}
   .page.on{display:block!important}
   .roster-wrap{overflow:visible;padding:0}
   .roster{font-size:8px;width:100%}
   .roster th,.roster td{border:1px solid #999;padding:2px 1px}
   .roster thead th{background:#eee;color:#000}
   .roster .name-cell{background:#f5f5f5;color:#000}
-  .roster td.work{color:#1a5fb4}
-  .roster td.ake{color:#c64600}
-  .roster td.off{color:#1a8a3f}
-  .roster td.yobi{color:#9a6700}
+  .roster td.work{color:#1a5fb4}.roster td.ake{color:#c64600}.roster td.off{color:#1a8a3f}.roster td.yobi{color:#9a6700}
   .roster td.edited{background:#ede9fe}
-  .roster td.sun-col{background:#fff0f0}
-  .roster td.sat-col{background:#f0f4ff}
+  .roster td.sun-col{background:#fff0f0}.roster td.sat-col{background:#f0f4ff}
   .roster .dow-row .sun{color:#c00}.roster .dow-row .sat{color:#1a5fb4}
   .print-title{display:block!important;text-align:center;font-size:14px;font-weight:700;margin-bottom:8px}
   @page{size:A4 landscape;margin:10mm}
 }
-.print-title{display:none}
-
-/* add member form */
-.add-row{display:flex;gap:6px;padding:8px 16px;align-items:center;flex-wrap:wrap}
-.add-row .inp{width:80px;flex:none}
-.add-row select{background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:8px;padding:6px 8px;font-size:13px;font-family:inherit}
 </style>
 </head>
 <body>
 
 <header>
   <h1>交番シフト一覧</h1>
-  <div class="sub" id="hSub">メンバー未登録</div>
+  <div class="sub" id="hSub">パターン・メンバー未設定</div>
 </header>
+<div class="tabs" id="tabBar"></div>
 
-<div class="tabs">
-  <div class="tab on" data-t="tbl">一覧表</div>
-  <div class="tab" data-t="mem">メンバー</div>
-  <div class="tab" data-t="pat">交番パターン</div>
-  <div class="tab" data-t="io">入出力</div>
-</div>
-
-<!-- ===== TABLE ===== -->
 <div class="page on" id="p-tbl">
-  <div id="tblEmpty" class="empty" style="text-align:center;padding:40px 20px;color:var(--dm);font-size:14px;line-height:1.8">
-    <div style="font-size:40px;margin-bottom:12px;opacity:.5">📊</div>
+  <div id="tblE" class="empty">
+    <div class="ic">📊</div>
     メンバーとパターンを設定して<br>「一覧生成」してください
   </div>
-  <div id="tblReady" class="hidden">
+  <div id="tblR" class="hidden">
     <div class="pnl no-print">
       <div class="rw">
         <label>年月</label>
         <input type="month" class="inp" id="inpMonth" value="2026-03">
       </div>
       <div style="display:flex;gap:8px">
-        <button class="btn" onclick="genTable()" style="flex:1">一覧生成</button>
-        <button class="btn g2" onclick="window.print()" style="flex:none;width:80px">🖨 印刷</button>
+        <button class="btn full" id="btnGen">一覧生成</button>
+        <button class="btn g2" id="btnPrint" style="flex:none;width:80px">🖨 印刷</button>
       </div>
     </div>
     <div class="print-title" id="printTitle"></div>
@@ -152,367 +124,390 @@ textarea.inp{resize:vertical;min-height:80px;font-size:13px;line-height:1.5}
   </div>
 </div>
 
-<!-- ===== MEMBERS ===== -->
 <div class="page" id="p-mem">
   <div class="sec">メンバー管理</div>
-  <div class="box">
-    各メンバーに名前・開始日・開始行路を設定。<br>
-    全員同じ交番パターンを使い、開始位置が違います。
-  </div>
+  <div class="box">名前・開始日・開始行路を設定。全員同じ交番パターンで開始位置が異なります。</div>
   <div class="ml" id="memList"></div>
   <div class="sec">メンバー追加</div>
-  <div class="add-row">
+  <div class="add-row" id="addMemRow">
     <input class="inp" id="mName" placeholder="名前" style="width:80px">
-    <input type="date" class="inp" id="mStart" value="2026-03-14" style="width:130px">
-    <select class="inp" id="mRoute" style="width:80px"></select>
-    <button class="btn sm" onclick="addMember()">追加</button>
+    <input type="date" class="inp" id="mStart" value="2026-03-14" style="width:130px;flex:none">
+    <select class="inp sel-sm" id="mRoute" style="width:80px;flex:none"></select>
+    <button class="btn sm" id="btnAddMem">追加</button>
   </div>
 </div>
 
-<!-- ===== PATTERN ===== -->
 <div class="page" id="p-pat">
   <div class="sec">交番パターン（全員共通）</div>
-  <div class="box">
-    泊まり→翌日自動で「ー」。土日で予備対象→「予」。
-  </div>
+  <div class="box">泊まり→翌日「ー」自動挿入。土日で予備対象→「予」。</div>
   <div class="ml" id="rList"></div>
   <div class="sec">行路追加</div>
-  <div class="add-row">
+  <div class="add-row" id="addRouteRow">
     <input class="inp" id="aN" placeholder="番号" inputmode="numeric" style="width:60px">
-    <select id="aT" style="background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:8px;padding:6px 8px;font-size:13px"><option value="0">日勤</option><option value="1">泊まり</option></select>
-    <select id="aR" style="background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:8px;padding:6px 8px;font-size:13px"><option value="0">休なし</option><option value="1">◯×1</option><option value="2">◯×2</option><option value="3">◯×3</option></select>
+    <select id="aT" class="sel-sm"><option value="0">日勤</option><option value="1">泊まり</option></select>
+    <select id="aR" class="sel-sm"><option value="0">休なし</option><option value="1">◯×1</option><option value="2">◯×2</option><option value="3">◯×3</option></select>
     <label style="font-size:12px;color:var(--yw);display:flex;align-items:center;gap:3px">
       <input type="checkbox" id="aY" style="accent-color:var(--yw)">予
     </label>
-    <button class="btn sm" onclick="addRoute()">追加</button>
+    <button class="btn sm" id="btnAddRoute">追加</button>
   </div>
-
   <div class="sec">簡易入力</div>
-  <div class="box">
-    カンマ区切り。<code style="color:var(--or)">t</code>=泊　<code style="color:var(--gn)">r1</code>=公休1日　<code style="color:var(--yw)">y</code>=予備<br>
-    例: <code style="color:var(--ac)">4, 1, 13tr1, 21tr1</code>
-  </div>
+  <div class="box">カンマ区切り。<code style="color:var(--or)">t</code>=泊　<code style="color:var(--gn)">r1</code>=公休1日　<code style="color:var(--yw)">y</code>=予備<br>例: <code style="color:var(--ac)">4, 1, 13tr1, 21tr1</code></div>
   <div class="pnl">
     <textarea class="inp" id="qArea" placeholder="4, 1, 13tr1, 21tr1, 14tr1, 19, 3y..."></textarea>
-    <button class="btn" onclick="doQuick()">簡易読み込み</button>
+    <button class="btn full" id="btnQuick">簡易読み込み</button>
   </div>
 </div>
 
-<!-- ===== IO ===== -->
 <div class="page" id="p-io">
-  <div class="sec">インポート（ZIP）</div>
+  <div class="sec">エクスポート</div>
   <div class="pnl">
-    <input type="file" accept=".zip" id="impFile" class="inp" style="padding:10px">
-    <button class="btn" onclick="doImportZip()">ZIPから読み込み</button>
+    <button class="btn g2 full" id="btnExport">JSONファイルをダウンロード</button>
   </div>
-  <div class="sec">エクスポート（ZIP）</div>
+  <div class="sec">インポート</div>
   <div class="pnl">
-    <button class="btn g2" onclick="doExportZip()">ZIPでダウンロード</button>
+    <input type="file" accept=".json" id="impFile" class="inp" style="padding:10px">
+    <button class="btn full" id="btnImport">JSONから読み込み</button>
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="mo hidden" id="modal" onclick="if(event.target===this)closeModal()">
+<div class="mo hidden" id="modal">
   <div class="mo-in" id="modalC"></div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== STATE =====
-let PAT = [];        // [{num, tomari, rest, yobi}]
-let MEM = [];        // [{name, startDate, startRouteIdx}]
-let EDITS = {};      // 'memberIdx:YYYY-MM-DD' -> {label, type}
-let curMonth = '2026-03';
+(function(){
+  "use strict";
 
-// ===== EXPAND =====
-function expand(){
-  const d=[];
-  for(const p of PAT){
-    d.push({type:'work',label:String(p.num),route:p.num});
-    if(p.tomari) d.push({type:'ake',label:'ー',route:p.num});
-    for(let i=0;i<p.rest;i++) d.push({type:'off',label:'◯',route:null});
-  }
-  return d;
-}
+  // ===== STATE =====
+  var PAT = [];
+  var MEM = [];
+  var EDITS = {};
 
-// Get shift for a member on a specific date
-function getShift(memIdx, dateStr){
-  // Check manual edit first
-  const ek = memIdx+':'+dateStr;
-  if(EDITS[ek]) return {...EDITS[ek], edited:true};
+  // ===== HELPERS =====
+  function $(id){ return document.getElementById(id); }
+  function dk(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show')},2000); }
 
-  const m = MEM[memIdx];
-  const days = expand();
-  if(!days.length) return null;
-
-  const start = new Date(m.startDate);
-  const target = new Date(dateStr);
-  const diff = Math.round((target - start) / 86400000);
-  if(diff < 0) return null;
-
-  // Find offset for starting route
-  let off = 0;
-  const targetNum = PAT[m.startRouteIdx]?.num;
-  for(let i=0;i<days.length;i++){
-    if(days[i].type==='work' && days[i].route===targetNum){off=i;break}
-  }
-
-  const pi = ((off + diff) % days.length + days.length) % days.length;
-  const p = days[pi];
-  const dow = target.getDay();
-  const ySet = new Set(PAT.filter(x=>x.yobi).map(x=>x.num));
-
-  let label=p.label, type=p.type;
-  if((dow===0||dow===6) && p.type==='work' && ySet.has(p.route)){
-    label='予'; type='yobi';
-  }
-  return {label, type, edited:false};
-}
-
-// ===== TABLE GENERATION =====
-function genTable(){
-  if(!PAT.length||!MEM.length){toast('パターンとメンバーを設定してください');return}
-  curMonth = document.getElementById('inpMonth').value;
-  const [y, m] = curMonth.split('-').map(Number);
-  const dim = new Date(y, m, 0).getDate(); // days in month
-  const today = dk(new Date());
-
-  document.getElementById('printTitle').textContent = `${y}年${m}月 勤務一覧表`;
-
-  const dowNames = ['日','月','火','水','木','金','土'];
-  let h = `<table class="roster">`;
-
-  // Date row
-  h += `<thead><tr class="date-row"><th rowspan="2" style="min-width:56px">氏名</th>`;
-  for(let d=1;d<=dim;d++){
-    const ds = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday = ds===today;
-    h += `<th${isToday?' class="today-col"':''}>${d}</th>`;
-  }
-  h += `</tr>`;
-
-  // DOW row
-  h += `<tr class="dow-row">`;
-  for(let d=1;d<=dim;d++){
-    const date = new Date(y, m-1, d);
-    const dow = date.getDay();
-    const ds = dk(date);
-    const cls = dow===0?'sun':dow===6?'sat':'';
-    const isToday = ds===today;
-    h += `<th class="${cls}${isToday?' today-col':''}">${dowNames[dow]}</th>`;
-  }
-  h += `</tr></thead>`;
-
-  // Member rows
-  h += `<tbody>`;
-  for(let mi=0; mi<MEM.length; mi++){
-    h += `<tr><td class="name-cell">${esc(MEM[mi].name)}</td>`;
-    for(let d=1;d<=dim;d++){
-      const date = new Date(y, m-1, d);
-      const ds = dk(date);
-      const dow = date.getDay();
-      const shift = getShift(mi, ds);
-      const isToday = ds===today;
-      let cls = shift ? shift.type : '';
-      if(shift?.edited) cls += ' edited';
-      if(dow===0) cls += ' sun-col';
-      if(dow===6) cls += ' sat-col';
-      if(isToday) cls += ' today-col';
-      const label = shift ? shift.label : '';
-      h += `<td class="${cls}" onclick="editCell(${mi},'${ds}')">${label}</td>`;
+  // ===== EXPAND PATTERN =====
+  function expand(){
+    var d=[];
+    for(var i=0;i<PAT.length;i++){
+      var p=PAT[i];
+      d.push({type:'work',label:String(p.num),route:p.num});
+      if(p.tomari) d.push({type:'ake',label:'ー',route:p.num});
+      for(var j=0;j<p.rest;j++) d.push({type:'off',label:'◯',route:null});
     }
-    h += `</tr>`;
+    return d;
   }
-  h += `</tbody></table>`;
 
-  document.getElementById('rosterWrap').innerHTML = h;
-}
-
-function dk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
-
-// ===== EDIT CELL =====
-function editCell(mi, ds){
-  const m=document.getElementById('modal'), c=document.getElementById('modalC');
-  const nums=[...new Set(PAT.map(p=>p.num))];
-  const opts=[...nums.map(n=>({l:String(n),t:'work'})),{l:'ー',t:'ake'},{l:'◯',t:'off'},{l:'予',t:'yobi'}];
-  const cur = getShift(mi, ds);
-  let h=`<h3>${MEM[mi].name} — ${ds}</h3><div class="mo-os">`;
-  for(const o of opts){
-    const sel=(cur&&cur.label===o.l)?' sel':'';
-    h+=`<div class="mo-o${sel}" onclick="setCell(${mi},'${ds}','${o.l}','${o.t}')">${o.l}</div>`;
+  // ===== GET SHIFT =====
+  function getShift(mi, dateStr){
+    var ek=mi+':'+dateStr;
+    if(EDITS[ek]) return {label:EDITS[ek].label, type:EDITS[ek].type, edited:true};
+    var m=MEM[mi];
+    var days=expand();
+    if(!days.length) return null;
+    var start=new Date(m.startDate+'T00:00:00');
+    var target=new Date(dateStr+'T00:00:00');
+    var diff=Math.round((target-start)/86400000);
+    if(diff<0) return null;
+    var off=0;
+    var tn=(PAT[m.startRouteIdx]||PAT[0]).num;
+    for(var i=0;i<days.length;i++){
+      if(days[i].type==='work'&&days[i].route===tn){off=i;break;}
+    }
+    var pi=((off+diff)%days.length+days.length)%days.length;
+    var p=days[pi];
+    var dow=target.getDay();
+    var ySet={};
+    for(var k=0;k<PAT.length;k++){if(PAT[k].yobi)ySet[PAT[k].num]=true;}
+    var label=p.label, type=p.type;
+    if((dow===0||dow===6)&&p.type==='work'&&ySet[p.route]){label='予';type='yobi';}
+    return {label:label,type:type,edited:false};
   }
-  const ek=mi+':'+ds;
-  if(EDITS[ek]){
-    h+=`<div class="mo-o" style="color:var(--dm);margin-top:8px" onclick="resetCell(${mi},'${ds}')">元に戻す</div>`;
+
+  // ===== GENERATE TABLE =====
+  var curMonth='2026-03';
+  function genTable(){
+    if(!PAT.length||!MEM.length){toast('パターンとメンバーを設定してください');return;}
+    curMonth=$('inpMonth').value;
+    var parts=curMonth.split('-');
+    var y=parseInt(parts[0]),m=parseInt(parts[1]);
+    var dim=new Date(y,m,0).getDate();
+    var today=dk(new Date());
+    $('printTitle').textContent=y+'年'+m+'月 勤務一覧表';
+    var dowN=['日','月','火','水','木','金','土'];
+    var h='<table class="roster"><thead><tr class="date-row"><th rowspan="2" style="min-width:56px">氏名</th>';
+    for(var d=1;d<=dim;d++){
+      var ds=y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      h+='<th'+(ds===today?' class="today-col"':'')+'>'+d+'</th>';
+    }
+    h+='</tr><tr class="dow-row">';
+    for(var d=1;d<=dim;d++){
+      var date=new Date(y,m-1,d);
+      var dow=date.getDay();
+      var ds=dk(date);
+      var cls=dow===0?'sun':dow===6?'sat':'';
+      h+='<th class="'+cls+(ds===today?' today-col':'')+'">'+dowN[dow]+'</th>';
+    }
+    h+='</tr></thead><tbody>';
+    for(var mi=0;mi<MEM.length;mi++){
+      h+='<tr><td class="name-cell">'+esc(MEM[mi].name)+'</td>';
+      for(var d=1;d<=dim;d++){
+        var date=new Date(y,m-1,d);
+        var ds=dk(date);
+        var dow=date.getDay();
+        var shift=getShift(mi,ds);
+        var cls=shift?shift.type:'';
+        if(shift&&shift.edited)cls+=' edited';
+        if(dow===0)cls+=' sun-col';
+        if(dow===6)cls+=' sat-col';
+        if(ds===today)cls+=' today-col';
+        var label=shift?shift.label:'';
+        h+='<td class="'+cls+'" data-mi="'+mi+'" data-ds="'+ds+'">'+label+'</td>';
+      }
+      h+='</tr>';
+    }
+    h+='</tbody></table>';
+    $('rosterWrap').innerHTML=h;
+
+    // Attach click events via delegation
+    $('rosterWrap').onclick=function(e){
+      var td=e.target.closest('td[data-mi]');
+      if(td) editCell(parseInt(td.dataset.mi), td.dataset.ds);
+    };
   }
-  h+=`</div>`;
-  c.innerHTML=h;m.classList.remove('hidden');
-}
-function setCell(mi,ds,l,t){EDITS[mi+':'+ds]={label:l,type:t};closeModal();genTable()}
-function resetCell(mi,ds){delete EDITS[mi+':'+ds];closeModal();genTable()}
-function closeModal(){document.getElementById('modal').classList.add('hidden')}
 
-// ===== MEMBER OPS =====
-function addMember(){
-  const name=document.getElementById('mName').value.trim();
-  if(!name){toast('名前を入力してください');return}
-  const startDate=document.getElementById('mStart').value;
-  const startRouteIdx=parseInt(document.getElementById('mRoute').value)||0;
-  MEM.push({name, startDate, startRouteIdx});
-  document.getElementById('mName').value='';
-  save();render();
-}
-function removeMember(i){MEM.splice(i,1);save();render()}
-function moveMember(i,d){const j=i+d;if(j<0||j>=MEM.length)return;[MEM[i],MEM[j]]=[MEM[j],MEM[i]];save();render()}
+  // ===== EDIT CELL =====
+  function editCell(mi,ds){
+    var modal=$('modal'),c=$('modalC');
+    var nums={};
+    for(var i=0;i<PAT.length;i++) nums[PAT[i].num]=true;
+    var numList=Object.keys(nums).map(Number);
+    var opts=[];
+    for(var i=0;i<numList.length;i++) opts.push({l:String(numList[i]),t:'work'});
+    opts.push({l:'ー',t:'ake'});
+    opts.push({l:'◯',t:'off'});
+    opts.push({l:'予',t:'yobi'});
+    var cur=getShift(mi,ds);
+    var h='<h3>'+esc(MEM[mi].name)+' — '+ds+'</h3><div class="mo-os">';
+    for(var i=0;i<opts.length;i++){
+      var o=opts[i];
+      var sel=(cur&&cur.label===o.l)?' sel':'';
+      h+='<div class="mo-o'+sel+'" data-l="'+esc(o.l)+'" data-t="'+o.t+'">'+esc(o.l)+'</div>';
+    }
+    var ek=mi+':'+ds;
+    if(EDITS[ek]){
+      h+='<div class="mo-o" data-action="reset" style="color:var(--dm);margin-top:8px">元に戻す</div>';
+    }
+    h+='</div>';
+    c.innerHTML=h;
+    modal.classList.remove('hidden');
 
-// ===== PATTERN OPS =====
-function addRoute(){
-  const num=parseInt(document.getElementById('aN').value);
-  if(isNaN(num))return;
-  PAT.push({num,tomari:document.getElementById('aT').value==='1',rest:parseInt(document.getElementById('aR').value),yobi:document.getElementById('aY').checked});
-  document.getElementById('aN').value='';document.getElementById('aY').checked=false;
-  save();render();
-}
-function removeRoute(i){PAT.splice(i,1);save();render()}
-function moveRoute(i,d){const j=i+d;if(j<0||j>=PAT.length)return;[PAT[i],PAT[j]]=[PAT[j],PAT[i]];save();render()}
-
-function doQuick(){
-  const raw=document.getElementById('qArea').value.trim();
-  if(!raw)return;
-  const items=raw.split(/[,、\s]+/).filter(Boolean);
-  const result=[];
-  for(const item of items){
-    const mt=item.match(/^(\d+)(t?)(r(\d))?(y?)$/);
-    if(!mt){toast(`解析エラー: "${item}"`);return}
-    result.push({num:parseInt(mt[1]),tomari:mt[2]==='t',rest:mt[4]?parseInt(mt[4]):0,yobi:mt[5]==='y'});
+    c.onclick=function(e){
+      var el=e.target.closest('.mo-o');
+      if(!el)return;
+      if(el.dataset.action==='reset'){
+        delete EDITS[ek];
+      } else {
+        EDITS[ek]={label:el.dataset.l,type:el.dataset.t};
+      }
+      modal.classList.add('hidden');
+      genTable();
+    };
+    modal.onclick=function(e){
+      if(e.target===modal) modal.classList.add('hidden');
+    };
   }
-  PAT=result;save();render();
-  toast(`${PAT.length}行路 読み込み完了`);
-}
 
-// ===== RENDER =====
-function render(){
-  renderMemList();renderRouteList();updateSelectors();updateHeader();
-  // Check if table should show
-  if(PAT.length&&MEM.length){
-    document.getElementById('tblEmpty').classList.add('hidden');
-    document.getElementById('tblReady').classList.remove('hidden');
-  }else{
-    document.getElementById('tblEmpty').classList.remove('hidden');
-    document.getElementById('tblReady').classList.add('hidden');
-  }
-}
-
-function updateHeader(){
-  const s=document.getElementById('hSub');
-  const parts=[];
-  if(PAT.length){const c=expand().length;parts.push(`${PAT.length}行路/${c}日周期`)}
-  if(MEM.length)parts.push(`${MEM.length}名`);
-  s.textContent=parts.length?parts.join(' · '):'パターン・メンバー未設定';
-}
-
-function updateSelectors(){
-  const sel=document.getElementById('mRoute');
-  sel.innerHTML=PAT.length
-    ? PAT.map((p,i)=>`<option value="${i}">${p.num}</option>`).join('')
-    : '<option value="0">—</option>';
-}
-
-function renderMemList(){
-  const el=document.getElementById('memList');
-  if(!MEM.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--dm)">メンバーがいません</div>';return}
-  el.innerHTML=MEM.map((m,i)=>{
-    const rName = PAT[m.startRouteIdx]?.num ?? '?';
-    return `<div class="mi">
-      <div class="nm">${esc(m.name)}</div>
-      <div class="info">開始:${m.startDate} / 行路${rName}から</div>
-      <button onclick="moveMember(${i},-1)">▲</button>
-      <button onclick="moveMember(${i},1)">▼</button>
-      <button class="x" onclick="removeMember(${i})">✕</button>
-    </div>`;
-  }).join('');
-}
-
-function renderRouteList(){
-  const el=document.getElementById('rList');
-  if(!PAT.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--dm)">パターン未設定</div>';return}
-  el.innerHTML=PAT.map((p,i)=>{
-    let tags=p.tomari?'<span class="chip c-tom">泊</span>':'<span class="chip c-nik">日勤</span>';
-    if(p.rest)tags+=`<span class="chip c-rst">◯×${p.rest}</span>`;
-    if(p.yobi)tags+=`<span class="chip c-yob">休日予</span>`;
-    return `<div class="mi">
-      <div class="nm" style="color:var(--ac)">${p.num}</div>
-      <div class="chips">${tags}</div>
-      <button onclick="moveRoute(${i},-1)">▲</button>
-      <button onclick="moveRoute(${i},1)">▼</button>
-      <button class="x" onclick="removeRoute(${i})">✕</button>
-    </div>`;
-  }).join('');
-}
-
-// ===== ZIP IO =====
-async function doExportZip(){
-  if(!PAT.length&&!MEM.length){toast('データがありません');return}
-  const zip=new JSZip();
-  zip.file('pattern.json',JSON.stringify(PAT,null,2));
-  zip.file('members.json',JSON.stringify(MEM,null,2));
-  if(Object.keys(EDITS).length) zip.file('edits.json',JSON.stringify(EDITS,null,2));
-  zip.file('README.txt',`交番シフト一覧データ\nエクスポート: ${new Date().toLocaleString('ja-JP')}\n行路: ${PAT.length}\nメンバー: ${MEM.length}\n`);
-  const blob=await zip.generateAsync({type:'blob'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`交番シフト_${dk(new Date())}.zip`;
-  a.click();
-  toast('ZIPダウンロード完了');
-}
-
-async function doImportZip(){
-  const file=document.getElementById('impFile').files[0];
-  if(!file){toast('ファイルを選択してください');return}
-  try{
-    const zip=await JSZip.loadAsync(file);
-    const pf=zip.file('pattern.json');
-    if(pf){PAT=JSON.parse(await pf.async('string')).map(d=>({num:parseInt(d.num),tomari:!!d.tomari,rest:parseInt(d.rest)||0,yobi:!!d.yobi}))}
-    const mf=zip.file('members.json');
-    if(mf){MEM=JSON.parse(await mf.async('string')).map(d=>({name:d.name,startDate:d.startDate,startRouteIdx:parseInt(d.startRouteIdx)||0}))}
-    const ef=zip.file('edits.json');
-    if(ef){EDITS=JSON.parse(await ef.async('string'))}
+  // ===== PATTERN OPS =====
+  function addRoute(){
+    var num=parseInt($('aN').value);
+    if(isNaN(num))return;
+    PAT.push({num:num,tomari:$('aT').value==='1',rest:parseInt($('aR').value),yobi:$('aY').checked});
+    $('aN').value='';$('aY').checked=false;
     save();render();
-    toast(`読み込み完了: ${PAT.length}行路 / ${MEM.length}名`);
-  }catch(e){toast('エラー: '+e)}
-}
+  }
+  function removeRoute(i){PAT.splice(i,1);save();render();}
+  function moveRoute(i,d){var j=i+d;if(j<0||j>=PAT.length)return;var tmp=PAT[i];PAT[i]=PAT[j];PAT[j]=tmp;save();render();}
 
-// ===== TABS =====
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-    tab.classList.add('on');
-    document.getElementById('p-'+tab.dataset.t).classList.add('on');
-  });
-});
-
-// ===== PERSISTENCE =====
-function save(){
-  try{location.hash=encodeURIComponent(JSON.stringify({p:PAT,m:MEM,e:EDITS}))}catch(e){}
-}
-function load(){
-  try{
-    if(location.hash.length>1){
-      const d=JSON.parse(decodeURIComponent(location.hash.slice(1)));
-      if(d.p)PAT=d.p.map(x=>({num:parseInt(x.num),tomari:!!x.tomari,rest:parseInt(x.rest)||0,yobi:!!x.yobi}));
-      if(d.m)MEM=d.m.map(x=>({name:x.name,startDate:x.startDate,startRouteIdx:parseInt(x.startRouteIdx)||0}));
-      if(d.e)EDITS=d.e;
+  function doQuick(){
+    var raw=$('qArea').value.trim();
+    if(!raw)return;
+    var items=raw.split(/[,、\s]+/).filter(Boolean);
+    var result=[];
+    for(var i=0;i<items.length;i++){
+      var mt=items[i].match(/^(\d+)(t?)(r(\d))?(y?)$/);
+      if(!mt){toast('解析エラー: "'+items[i]+'"');return;}
+      result.push({num:parseInt(mt[1]),tomari:mt[2]==='t',rest:mt[4]?parseInt(mt[4]):0,yobi:mt[5]==='y'});
     }
-  }catch(e){}
-}
+    PAT=result;save();render();
+    toast(PAT.length+'行路 読み込み完了');
+  }
 
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+  // ===== MEMBER OPS =====
+  function addMember(){
+    var name=$('mName').value.trim();
+    if(!name){toast('名前を入力');return;}
+    MEM.push({name:name,startDate:$('mStart').value,startRouteIdx:parseInt($('mRoute').value)||0});
+    $('mName').value='';
+    save();render();
+  }
+  function removeMember(i){MEM.splice(i,1);save();render();}
+  function moveMember(i,d){var j=i+d;if(j<0||j>=MEM.length)return;var tmp=MEM[i];MEM[i]=MEM[j];MEM[j]=tmp;save();render();}
 
-// ===== INIT =====
-load();
-render();
+  // ===== RENDER =====
+  function render(){
+    renderRL();renderML();updateSel();updateH();
+    if(PAT.length&&MEM.length){$('tblE').classList.add('hidden');$('tblR').classList.remove('hidden');}
+    else{$('tblE').classList.remove('hidden');$('tblR').classList.add('hidden');}
+  }
+
+  function updateH(){
+    var s=$('hSub'),parts=[];
+    if(PAT.length){parts.push(PAT.length+'行路/'+expand().length+'日周期');}
+    if(MEM.length){parts.push(MEM.length+'名');}
+    s.textContent=parts.length?parts.join(' · '):'パターン・メンバー未設定';
+  }
+
+  function updateSel(){
+    var sel=$('mRoute');
+    sel.innerHTML=PAT.length
+      ?PAT.map(function(p,i){return '<option value="'+i+'">'+p.num+'</option>';}).join('')
+      :'<option value="0">—</option>';
+  }
+
+  function renderML(){
+    var el=$('memList');
+    if(!MEM.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--dm)">メンバーなし</div>';return;}
+    el.innerHTML=MEM.map(function(m,i){
+      var rName=PAT[m.startRouteIdx]?PAT[m.startRouteIdx].num:'?';
+      return '<div class="mi"><div class="nm">'+esc(m.name)+'</div><div class="info">開始:'+m.startDate+' / 行路'+rName+'</div>'
+        +'<button data-action="mm" data-i="'+i+'" data-d="-1">▲</button>'
+        +'<button data-action="mm" data-i="'+i+'" data-d="1">▼</button>'
+        +'<button class="x" data-action="rm" data-i="'+i+'">✕</button></div>';
+    }).join('');
+  }
+
+  function renderRL(){
+    var el=$('rList');
+    if(!PAT.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--dm)">パターン未設定</div>';return;}
+    el.innerHTML=PAT.map(function(p,i){
+      var tags=p.tomari?'<span class="chip c-tom">泊</span>':'<span class="chip c-nik">日勤</span>';
+      if(p.rest)tags+='<span class="chip c-rst">◯×'+p.rest+'</span>';
+      if(p.yobi)tags+='<span class="chip c-yob">休日予</span>';
+      return '<div class="mi"><div class="nm" style="color:var(--ac)">'+p.num+'</div><div class="chips">'+tags+'</div>'
+        +'<button data-action="mr" data-i="'+i+'" data-d="-1">▲</button>'
+        +'<button data-action="mr" data-i="'+i+'" data-d="1">▼</button>'
+        +'<button class="x" data-action="rr" data-i="'+i+'">✕</button></div>';
+    }).join('');
+  }
+
+  // ===== IO =====
+  function doExport(){
+    if(!PAT.length&&!MEM.length){toast('データなし');return;}
+    var data=JSON.stringify({pattern:PAT,members:MEM,edits:EDITS},null,2);
+    var blob=new Blob([data],{type:'application/json'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='交番シフト_'+dk(new Date())+'.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    toast('ダウンロード完了');
+  }
+
+  function doImport(){
+    var file=$('impFile').files[0];
+    if(!file){toast('ファイルを選択');return;}
+    var reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        var d=JSON.parse(e.target.result);
+        if(d.pattern) PAT=d.pattern.map(function(x){return {num:parseInt(x.num),tomari:!!x.tomari,rest:parseInt(x.rest)||0,yobi:!!x.yobi};});
+        if(d.members) MEM=d.members.map(function(x){return {name:x.name,startDate:x.startDate,startRouteIdx:parseInt(x.startRouteIdx)||0};});
+        if(d.edits) EDITS=d.edits;
+        save();render();
+        toast('読み込み完了: '+PAT.length+'行路 / '+MEM.length+'名');
+      }catch(err){
+        toast('JSONエラー: '+err);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // ===== PERSISTENCE =====
+  function save(){
+    try{localStorage.setItem('shift_data',JSON.stringify({p:PAT,m:MEM,e:EDITS}));}catch(e){}
+  }
+  function load(){
+    try{
+      var raw=localStorage.getItem('shift_data');
+      if(raw){
+        var d=JSON.parse(raw);
+        if(d.p)PAT=d.p;if(d.m)MEM=d.m;if(d.e)EDITS=d.e;
+      }
+    }catch(e){}
+  }
+
+  // ===== TABS =====
+  var tabDefs=[
+    {id:'tbl',label:'一覧表'},
+    {id:'mem',label:'メンバー'},
+    {id:'pat',label:'パターン'},
+    {id:'io',label:'入出力'}
+  ];
+  var tabBar=$('tabBar');
+  tabBar.innerHTML=tabDefs.map(function(t,i){
+    return '<div class="tab'+(i===0?' on':'')+'" data-t="'+t.id+'">'+t.label+'</div>';
+  }).join('');
+
+  tabBar.addEventListener('click',function(e){
+    var tab=e.target.closest('.tab');
+    if(!tab)return;
+    tabBar.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+    tab.classList.add('on');
+    $('p-'+tab.dataset.t).classList.add('on');
+  });
+
+  // ===== EVENT DELEGATION =====
+  // Table buttons
+  $('btnGen').addEventListener('click', genTable);
+  $('btnPrint').addEventListener('click', function(){ window.print(); });
+  $('btnAddMem').addEventListener('click', addMember);
+  $('btnAddRoute').addEventListener('click', addRoute);
+  $('btnQuick').addEventListener('click', doQuick);
+  $('btnExport').addEventListener('click', doExport);
+  $('btnImport').addEventListener('click', doImport);
+
+  // Member list delegation
+  $('memList').addEventListener('click',function(e){
+    var btn=e.target.closest('button[data-action]');
+    if(!btn)return;
+    var i=parseInt(btn.dataset.i);
+    if(btn.dataset.action==='mm') moveMember(i,parseInt(btn.dataset.d));
+    if(btn.dataset.action==='rm') removeMember(i);
+  });
+
+  // Route list delegation
+  $('rList').addEventListener('click',function(e){
+    var btn=e.target.closest('button[data-action]');
+    if(!btn)return;
+    var i=parseInt(btn.dataset.i);
+    if(btn.dataset.action==='mr') moveRoute(i,parseInt(btn.dataset.d));
+    if(btn.dataset.action==='rr') removeRoute(i);
+  });
+
+  // ===== INIT =====
+  load();
+  render();
+
+})();
 </script>
 </body>
 </html>
