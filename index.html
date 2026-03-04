@@ -4,510 +4,406 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0a0a0f">
+<meta name="theme-color" content="#0f1117">
 <title>交番シフト一覧</title>
 <style>
-:root{--bg:#0a0a0f;--s1:#151520;--s2:#1c1c2c;--bd:#2a2a3e;--tx:#e0e0ec;--dm:#6a6a7e;--ac:#4a9eff;--gn:#4ade80;--or:#fb923c;--rd:#f87171;--pr:#a78bfa;--yw:#fbbf24}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100dvh}
-header{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:12px 16px 8px}
-header h1{font-size:17px;font-weight:700}
-header .sub{font-size:11px;color:var(--dm);margin-top:2px}
-.tabs{display:flex;border-bottom:1px solid var(--bd)}
-.tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;color:var(--dm);cursor:pointer;border-bottom:2px solid transparent;background:none}
-.tab.on{color:var(--ac);border-bottom-color:var(--ac)}
-.page{display:none;padding-bottom:60px}.page.on{display:block}
-.sec{font-size:12px;color:var(--dm);padding:14px 16px 6px;letter-spacing:.03em}
-.box{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--dm);line-height:1.6;margin:0 16px 8px}
-.pnl{padding:8px 16px;display:flex;flex-direction:column;gap:8px}
-.rw{display:flex;gap:8px;align-items:center}
-.rw label{font-size:13px;color:var(--dm);min-width:80px;flex-shrink:0}
-.inp{flex:1;background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:8px;padding:8px 10px;font-size:15px;font-family:inherit;outline:none}
+:root{--bg:#0f1117;--s1:#181c25;--s2:#222833;--bd:#333a48;--tx:#d8dce6;--dm:#6b7280;--ac:#5b9cf6;--gn:#4ade80;--or:#fb923c;--rd:#f87171;--pr:#a78bfa;--yw:#fbbf24}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;font-size:14px;line-height:1.4;overflow-x:hidden}
+
+/* Header */
+.hd{background:var(--s1);border-bottom:1px solid var(--bd);padding:12px 16px}
+.hd h1{font-size:16px;font-weight:700}.hd p{font-size:11px;color:var(--dm);margin-top:2px}
+
+/* Tabs */
+.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--bd)}
+.tabs button{flex:1;padding:10px 4px;font-size:12px;font-weight:600;color:var(--dm);background:none;border:none;border-bottom:2px solid transparent;font-family:inherit;cursor:pointer}
+.tabs button.on{color:var(--ac);border-bottom-color:var(--ac)}
+
+/* Pages */
+.pg{display:none;padding:12px}.pg.on{display:block}
+
+/* Shared */
+.lbl{font-size:11px;color:var(--dm);margin-bottom:4px;display:block}
+.inp{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:6px;padding:8px;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none}
 .inp:focus{border-color:var(--ac)}
-textarea.inp{resize:vertical;min-height:80px;font-size:13px;line-height:1.5}
-.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;-webkit-appearance:none;appearance:none;touch-action:manipulation}
+select.inp{padding-right:24px}
+textarea.inp{min-height:70px;resize:vertical;font-size:12px}
+.gap{margin-top:10px}
+.gap2{margin-top:16px}
+.row{display:flex;gap:8px;align-items:center}
+.btn{display:inline-block;background:var(--ac);color:#fff;border:none;border-radius:6px;padding:9px 14px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;text-align:center;-webkit-appearance:none}
 .btn:active{opacity:.7}
-.btn.g2{background:var(--s2);border:1px solid var(--bd);color:var(--tx)}
-.btn.sm{padding:7px 12px;font-size:12px}
-.btn.warn{background:var(--or)}
-.btn.full{width:100%}
-.hidden{display:none}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--s2);border:1px solid var(--bd);color:var(--tx);padding:10px 20px;border-radius:8px;font-size:13px;z-index:300;pointer-events:none;opacity:0;transition:opacity .3s}
-.toast.show{opacity:1}
-.ml{padding:8px 16px;display:flex;flex-direction:column;gap:4px}
-.mi{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:8px 12px}
-.mi .nm{font-size:14px;font-weight:600;min-width:60px}
-.mi .info{font-size:11px;color:var(--dm);flex:1}
-.mi button{background:none;border:none;cursor:pointer;padding:4px;font-size:14px;color:var(--dm);touch-action:manipulation}
-.mi .x{color:var(--rd);font-size:18px}
-.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
-.chip{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
-.c-tom{background:rgba(251,146,60,.15);color:var(--or)}
-.c-nik{background:rgba(74,158,255,.1);color:var(--ac)}
-.c-rst{background:rgba(74,222,128,.12);color:var(--gn)}
-.c-yob{background:rgba(251,191,36,.12);color:var(--yw)}
-.add-row{display:flex;gap:6px;padding:8px 16px;align-items:center;flex-wrap:wrap}
-.add-row .inp{width:64px;flex:none;text-align:center}
-.add-row select,.sel-sm{background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:8px;padding:6px 8px;font-size:13px;font-family:inherit;-webkit-appearance:none;appearance:none}
-.roster-wrap{overflow-x:auto;padding:8px;-webkit-overflow-scrolling:touch}
-.roster{border-collapse:collapse;font-size:11px;min-width:100%}
-.roster th,.roster td{border:1px solid var(--bd);padding:3px 2px;text-align:center;white-space:nowrap}
-.roster thead th{background:var(--s2);position:sticky;top:0;z-index:2;font-weight:600}
-.roster .date-row th{font-size:12px;padding:4px 2px}
-.roster .dow-row th{font-size:10px;padding:2px;color:var(--dm)}
-.roster .dow-row .sun{color:var(--rd)}.roster .dow-row .sat{color:var(--ac)}
-.roster .name-cell{position:sticky;left:0;z-index:1;background:var(--s1);font-weight:600;font-size:12px;min-width:56px;max-width:72px;padding:4px 6px}
-.roster td{min-width:28px;font-weight:700;font-size:12px;cursor:pointer;touch-action:manipulation}
-.roster td:active{background:var(--s2)}
-.roster td.work{color:var(--ac)}
-.roster td.ake{color:var(--or)}
-.roster td.off{color:var(--gn)}
-.roster td.yobi{color:var(--yw)}
-.roster td.edited{background:rgba(167,139,250,.12)}
-.roster td.sun-col{background:rgba(248,113,113,.04)}
-.roster td.sat-col{background:rgba(74,158,255,.04)}
-.roster .today-col{background:rgba(74,158,255,.1)!important}
-.mo{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:flex-end;justify-content:center}
-.mo-in{background:var(--s1);border-radius:16px 16px 0 0;width:100%;max-width:480px;padding:20px 16px 32px;max-height:70dvh;overflow-y:auto}
-.mo h3{font-size:15px;font-weight:700;margin-bottom:12px}
-.mo-os{display:flex;flex-direction:column;gap:6px}
-.mo-o{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:12px;font-size:15px;font-weight:600;cursor:pointer;text-align:center;font-family:inherit;color:var(--tx);touch-action:manipulation}
-.mo-o:active{background:var(--bd)}
-.mo-o.sel{border-color:var(--ac);color:var(--ac)}
-.empty{text-align:center;padding:40px 20px;color:var(--dm);font-size:14px;line-height:1.8}
-.empty .ic{font-size:40px;margin-bottom:12px;opacity:.5}
-.print-title{display:none}
+.btn-s{background:var(--s2);border:1px solid var(--bd);color:var(--tx)}
+.btn-w{width:100%}
+.card{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:10px;margin-bottom:6px}
+.note{background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--dm);line-height:1.5;margin-bottom:10px}
+.tag{display:inline-block;font-size:10px;padding:2px 6px;border-radius:3px;font-weight:600;margin-right:4px}
+.t1{background:rgba(251,146,60,.15);color:var(--or)}
+.t2{background:rgba(74,158,255,.1);color:var(--ac)}
+.t3{background:rgba(74,222,128,.12);color:var(--gn)}
+.t4{background:rgba(251,191,36,.12);color:var(--yw)}
+.empty{text-align:center;padding:40px 16px;color:var(--dm);font-size:13px;line-height:1.8}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--bd);color:var(--tx);padding:8px 20px;border-radius:8px;font-size:12px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.v{opacity:1}
+
+/* Roster */
+.rw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:8px}
+.rt{border-collapse:collapse;font-size:10px}
+.rt th,.rt td{border:1px solid var(--bd);padding:2px 3px;text-align:center;white-space:nowrap}
+.rt thead th{background:var(--s2);font-weight:600;position:sticky;top:0;z-index:2}
+.rt .nc{position:sticky;left:0;z-index:3;background:var(--s1);font-weight:600;font-size:11px;min-width:50px;padding:3px 5px;text-align:left}
+.rt td{min-width:26px;font-weight:700;font-size:11px;cursor:pointer}
+.rt td:active{opacity:.7}
+.rt .wk{color:var(--ac)}.rt .ak{color:var(--or)}.rt .of{color:var(--gn)}.rt .yb{color:var(--yw)}.rt .ed{background:rgba(167,139,250,.1)}
+.rt .sn{color:var(--rd)}.rt .st{color:var(--ac)}
+.rt .sc{background:rgba(248,113,113,.03)}.rt .stc{background:rgba(74,158,255,.03)}
+.rt .tc{background:rgba(74,158,255,.08)!important}
+.dw{font-size:9px;color:var(--dm);font-weight:400}
+.ptitle{display:none}
+
+/* Modal */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.mo.v{display:flex}
+.mo-c{background:var(--s1);border-radius:14px 14px 0 0;width:100%;max-width:400px;padding:16px 14px 28px;max-height:65vh;overflow-y:auto}
+.mo-c h3{font-size:14px;font-weight:700;margin-bottom:10px}
+.mo-c .opt{background:var(--s2);border:1px solid var(--bd);border-radius:6px;padding:10px;font-size:14px;font-weight:600;text-align:center;margin-bottom:5px;cursor:pointer;color:var(--tx)}
+.mo-c .opt:active{background:var(--bd)}
+.mo-c .opt.on{border-color:var(--ac);color:var(--ac)}
+
+/* Print */
 @media print{
-  body{background:#fff;color:#000;font-size:9px}
-  header,.tabs,.page:not(.on),.no-print,.toast{display:none!important}
-  .page.on{display:block!important}
-  .roster-wrap{overflow:visible;padding:0}
-  .roster{font-size:8px;width:100%}
-  .roster th,.roster td{border:1px solid #999;padding:2px 1px}
-  .roster thead th{background:#eee;color:#000}
-  .roster .name-cell{background:#f5f5f5;color:#000}
-  .roster td.work{color:#1a5fb4}.roster td.ake{color:#c64600}.roster td.off{color:#1a8a3f}.roster td.yobi{color:#9a6700}
-  .roster td.edited{background:#ede9fe}
-  .roster td.sun-col{background:#fff0f0}.roster td.sat-col{background:#f0f4ff}
-  .roster .dow-row .sun{color:#c00}.roster .dow-row .sat{color:#1a5fb4}
-  .print-title{display:block!important;text-align:center;font-size:14px;font-weight:700;margin-bottom:8px}
-  @page{size:A4 landscape;margin:10mm}
+  body{background:#fff;color:#000;font-size:8px}
+  .hd,.tabs,.pg:not(.on),.np,.toast{display:none!important}
+  .pg.on{display:block!important}
+  .rw{overflow:visible}
+  .rt{font-size:7px;width:100%}
+  .rt th,.rt td{border-color:#aaa}
+  .rt thead th{background:#eee;color:#000}
+  .rt .nc{background:#f5f5f5;color:#000}
+  .rt .wk{color:#1a5fb4}.rt .ak{color:#c64600}.rt .of{color:#1a8a3f}.rt .yb{color:#9a6700}
+  .ptitle{display:block!important;text-align:center;font-size:13px;font-weight:700;margin-bottom:6px}
+  @page{size:A4 landscape;margin:8mm}
 }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>交番シフト一覧</h1>
-  <div class="sub" id="hSub">パターン・メンバー未設定</div>
-</header>
-<div class="tabs" id="tabBar"></div>
+<div class="hd"><h1>交番シフト一覧</h1><p id="sub">未設定</p></div>
+<div class="tabs" id="tabs">
+  <button class="on" data-p="0">一覧表</button>
+  <button data-p="1">メンバー</button>
+  <button data-p="2">パターン</button>
+  <button data-p="3">入出力</button>
+</div>
 
-<div class="page on" id="p-tbl">
-  <div id="tblE" class="empty">
-    <div class="ic">📊</div>
-    メンバーとパターンを設定して<br>「一覧生成」してください
-  </div>
-  <div id="tblR" class="hidden">
-    <div class="pnl no-print">
-      <div class="rw">
-        <label>年月</label>
-        <input type="month" class="inp" id="inpMonth" value="2026-03">
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn full" id="btnGen">一覧生成</button>
-        <button class="btn g2" id="btnPrint" style="flex:none;width:80px">🖨 印刷</button>
+<!-- PAGE 0: TABLE -->
+<div class="pg on" id="pg0">
+  <div id="tE" class="empty">パターンとメンバーを設定してください</div>
+  <div id="tR" style="display:none">
+    <div class="np">
+      <label class="lbl">年月</label>
+      <input type="month" class="inp" id="iM" value="2026-03">
+      <div class="row gap">
+        <button class="btn btn-w" id="bG">一覧生成</button>
+        <button class="btn btn-s" id="bP" style="flex:none">🖨印刷</button>
       </div>
     </div>
-    <div class="print-title" id="printTitle"></div>
-    <div class="roster-wrap" id="rosterWrap"></div>
+    <div class="ptitle" id="pt"></div>
+    <div class="rw" id="rW"></div>
   </div>
 </div>
 
-<div class="page" id="p-mem">
-  <div class="sec">メンバー管理</div>
-  <div class="box">名前・開始日・開始行路を設定。全員同じ交番パターンで開始位置が異なります。</div>
-  <div class="ml" id="memList"></div>
-  <div class="sec">メンバー追加</div>
-  <div class="add-row" id="addMemRow">
-    <input class="inp" id="mName" placeholder="名前" style="width:80px">
-    <input type="date" class="inp" id="mStart" value="2026-03-14" style="width:130px;flex:none">
-    <select class="inp sel-sm" id="mRoute" style="width:80px;flex:none"></select>
-    <button class="btn sm" id="btnAddMem">追加</button>
+<!-- PAGE 1: MEMBERS -->
+<div class="pg" id="pg1">
+  <div class="note">名前・開始日・開始行路を設定。全員同じパターンで開始位置が違います。</div>
+  <div id="mL"></div>
+  <div class="gap2">
+    <label class="lbl">名前</label>
+    <input class="inp" id="mN" placeholder="名前">
+  </div>
+  <div class="gap">
+    <label class="lbl">開始日</label>
+    <input type="date" class="inp" id="mS" value="2026-03-14">
+  </div>
+  <div class="gap">
+    <label class="lbl">開始行路</label>
+    <select class="inp" id="mR"></select>
+  </div>
+  <button class="btn btn-w gap" id="bAM">メンバー追加</button>
+</div>
+
+<!-- PAGE 2: PATTERN -->
+<div class="pg" id="pg2">
+  <div class="note">泊まり→翌日「ー」自動。土日で予備対象→「予」。</div>
+  <div id="pL"></div>
+  <div class="gap2">
+    <label class="lbl">行路追加</label>
+    <div class="row">
+      <input class="inp" id="aN" placeholder="番号" inputmode="numeric" style="width:55px;flex:none;text-align:center">
+      <select class="inp" id="aT" style="width:70px;flex:none"><option value="0">日勤</option><option value="1">泊まり</option></select>
+      <select class="inp" id="aR" style="width:70px;flex:none"><option value="0">休なし</option><option value="1">◯×1</option><option value="2">◯×2</option><option value="3">◯×3</option></select>
+      <label style="font-size:11px;color:var(--yw);white-space:nowrap"><input type="checkbox" id="aY">予</label>
+      <button class="btn" id="bAR">追加</button>
+    </div>
+  </div>
+  <div class="gap2">
+    <label class="lbl">簡易入力（カンマ区切り: 4, 13tr1, 3y）</label>
+    <textarea class="inp" id="qA" placeholder="4, 1, 13tr1, 21tr1..."></textarea>
+    <button class="btn btn-w gap" id="bQ">簡易読み込み</button>
   </div>
 </div>
 
-<div class="page" id="p-pat">
-  <div class="sec">交番パターン（全員共通）</div>
-  <div class="box">泊まり→翌日「ー」自動挿入。土日で予備対象→「予」。</div>
-  <div class="ml" id="rList"></div>
-  <div class="sec">行路追加</div>
-  <div class="add-row" id="addRouteRow">
-    <input class="inp" id="aN" placeholder="番号" inputmode="numeric" style="width:60px">
-    <select id="aT" class="sel-sm"><option value="0">日勤</option><option value="1">泊まり</option></select>
-    <select id="aR" class="sel-sm"><option value="0">休なし</option><option value="1">◯×1</option><option value="2">◯×2</option><option value="3">◯×3</option></select>
-    <label style="font-size:12px;color:var(--yw);display:flex;align-items:center;gap:3px">
-      <input type="checkbox" id="aY" style="accent-color:var(--yw)">予
-    </label>
-    <button class="btn sm" id="btnAddRoute">追加</button>
-  </div>
-  <div class="sec">簡易入力</div>
-  <div class="box">カンマ区切り。<code style="color:var(--or)">t</code>=泊　<code style="color:var(--gn)">r1</code>=公休1日　<code style="color:var(--yw)">y</code>=予備<br>例: <code style="color:var(--ac)">4, 1, 13tr1, 21tr1</code></div>
-  <div class="pnl">
-    <textarea class="inp" id="qArea" placeholder="4, 1, 13tr1, 21tr1, 14tr1, 19, 3y..."></textarea>
-    <button class="btn full" id="btnQuick">簡易読み込み</button>
+<!-- PAGE 3: IO -->
+<div class="pg" id="pg3">
+  <div class="note">JSONファイルでデータを保存・読み込みできます。</div>
+  <button class="btn btn-s btn-w" id="bEx">エクスポート（JSONダウンロード）</button>
+  <div class="gap2">
+    <label class="lbl">インポート</label>
+    <input type="file" accept=".json" class="inp" id="iF" style="padding:8px">
+    <button class="btn btn-w gap" id="bIm">JSONから読み込み</button>
   </div>
 </div>
 
-<div class="page" id="p-io">
-  <div class="sec">エクスポート</div>
-  <div class="pnl">
-    <button class="btn g2 full" id="btnExport">JSONファイルをダウンロード</button>
-  </div>
-  <div class="sec">インポート</div>
-  <div class="pnl">
-    <input type="file" accept=".json" id="impFile" class="inp" style="padding:10px">
-    <button class="btn full" id="btnImport">JSONから読み込み</button>
-  </div>
-</div>
-
-<div class="mo hidden" id="modal">
-  <div class="mo-in" id="modalC"></div>
-</div>
-<div class="toast" id="toast"></div>
+<!-- MODAL -->
+<div class="mo" id="mo"><div class="mo-c" id="moC"></div></div>
+<div class="toast" id="tt"></div>
 
 <script>
-(function(){
-  "use strict";
+try{(function(){
 
-  // ===== STATE =====
-  var PAT = [];
-  var MEM = [];
-  var EDITS = {};
+var PAT=[];
+var MEM=[];
+var ED={};
 
-  // ===== HELPERS =====
-  function $(id){ return document.getElementById(id); }
-  function dk(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show')},2000); }
+function $(x){return document.getElementById(x)}
+function dk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function toast(m){var t=$('tt');t.textContent=m;t.classList.add('v');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('v')},2000)}
 
-  // ===== EXPAND PATTERN =====
-  function expand(){
-    var d=[];
-    for(var i=0;i<PAT.length;i++){
-      var p=PAT[i];
-      d.push({type:'work',label:String(p.num),route:p.num});
-      if(p.tomari) d.push({type:'ake',label:'ー',route:p.num});
-      for(var j=0;j<p.rest;j++) d.push({type:'off',label:'◯',route:null});
+// === EXPAND ===
+function expand(){
+  var d=[];
+  for(var i=0;i<PAT.length;i++){
+    var p=PAT[i];
+    d.push({t:'work',l:String(p.num),r:p.num});
+    if(p.tomari) d.push({t:'ake',l:'ー',r:p.num});
+    for(var j=0;j<p.rest;j++) d.push({t:'off',l:'◯',r:null});
+  }
+  return d;
+}
+
+// === SHIFT CALC ===
+function getS(mi,ds){
+  var ek=mi+':'+ds;
+  if(ED[ek])return{l:ED[ek].l,t:ED[ek].t,e:true};
+  var m=MEM[mi],days=expand();
+  if(!days.length)return null;
+  var s=new Date(m.sd+'T00:00:00'),tg=new Date(ds+'T00:00:00');
+  var diff=Math.round((tg-s)/864e5);
+  if(diff<0)return null;
+  var off=0,tn=(PAT[m.ri]||PAT[0]).num;
+  for(var i=0;i<days.length;i++){if(days[i].t==='work'&&days[i].r===tn){off=i;break}}
+  var pi=((off+diff)%days.length+days.length)%days.length;
+  var p=days[pi],dow=tg.getDay();
+  var yS={};for(var k=0;k<PAT.length;k++){if(PAT[k].yobi)yS[PAT[k].num]=1}
+  var l=p.l,t=p.t;
+  if((dow===0||dow===6)&&p.t==='work'&&yS[p.r]){l='予';t='yobi'}
+  return{l:l,t:t,e:false};
+}
+
+// === TABLE ===
+function genT(){
+  if(!PAT.length||!MEM.length){toast('パターンとメンバーを設定');return}
+  var mv=$('iM').value,ps=mv.split('-'),y=+ps[0],m=+ps[1];
+  var dim=new Date(y,m,0).getDate(),td=dk(new Date());
+  $('pt').textContent=y+'年'+m+'月 勤務一覧表';
+  var dn=['日','月','火','水','木','金','土'];
+  var h='<table class="rt"><thead><tr><th rowspan="2" class="nc" style="z-index:4">氏名</th>';
+  var i,d;
+  for(d=1;d<=dim;d++){
+    var ds2=y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    h+='<th'+(ds2===td?' class="tc"':'')+'>'+d+'</th>';
+  }
+  h+='</tr><tr>';
+  for(d=1;d<=dim;d++){
+    var dt=new Date(y,m-1,d),dw=dt.getDay(),ds3=dk(dt);
+    var cc=dw===0?'sn':dw===6?'st':'';
+    h+='<th class="dw '+cc+(ds3===td?' tc':'')+'">'+(dn[dw])+'</th>';
+  }
+  h+='</tr></thead><tbody>';
+  for(i=0;i<MEM.length;i++){
+    h+='<tr><td class="nc">'+esc(MEM[i].nm)+'</td>';
+    for(d=1;d<=dim;d++){
+      var dt2=new Date(y,m-1,d),ds4=dk(dt2),dw2=dt2.getDay();
+      var sh=getS(i,ds4);
+      var tc=sh?{work:'wk',ake:'ak',off:'of',yobi:'yb'}[sh.t]||'':'';
+      if(sh&&sh.e)tc+=' ed';
+      if(dw2===0)tc+=' sc';if(dw2===6)tc+=' stc';
+      if(ds4===td)tc+=' tc';
+      h+='<td class="'+tc+'" data-m="'+i+'" data-d="'+ds4+'">'+(sh?sh.l:'')+'</td>';
     }
-    return d;
+    h+='</tr>';
   }
+  h+='</tbody></table>';
+  $('rW').innerHTML=h;
+}
 
-  // ===== GET SHIFT =====
-  function getShift(mi, dateStr){
-    var ek=mi+':'+dateStr;
-    if(EDITS[ek]) return {label:EDITS[ek].label, type:EDITS[ek].type, edited:true};
-    var m=MEM[mi];
-    var days=expand();
-    if(!days.length) return null;
-    var start=new Date(m.startDate+'T00:00:00');
-    var target=new Date(dateStr+'T00:00:00');
-    var diff=Math.round((target-start)/86400000);
-    if(diff<0) return null;
-    var off=0;
-    var tn=(PAT[m.startRouteIdx]||PAT[0]).num;
-    for(var i=0;i<days.length;i++){
-      if(days[i].type==='work'&&days[i].route===tn){off=i;break;}
-    }
-    var pi=((off+diff)%days.length+days.length)%days.length;
-    var p=days[pi];
-    var dow=target.getDay();
-    var ySet={};
-    for(var k=0;k<PAT.length;k++){if(PAT[k].yobi)ySet[PAT[k].num]=true;}
-    var label=p.label, type=p.type;
-    if((dow===0||dow===6)&&p.type==='work'&&ySet[p.route]){label='予';type='yobi';}
-    return {label:label,type:type,edited:false};
+// === CELL EDIT ===
+$('rW').addEventListener('click',function(e){
+  var td=e.target;
+  while(td&&td.tagName!=='TD')td=td.parentElement;
+  if(!td||!td.dataset.m)return;
+  var mi=+td.dataset.m,ds=td.dataset.d;
+  var nums={};for(var i=0;i<PAT.length;i++)nums[PAT[i].num]=1;
+  var nl=Object.keys(nums).map(Number);
+  var opts=[];for(i=0;i<nl.length;i++)opts.push({l:String(nl[i]),t:'work'});
+  opts.push({l:'ー',t:'ake'},{l:'◯',t:'off'},{l:'予',t:'yobi'});
+  var cur=getS(mi,ds);
+  var h='<h3>'+esc(MEM[mi].nm)+' '+ds+'</h3>';
+  for(i=0;i<opts.length;i++){
+    var o=opts[i],sl=(cur&&cur.l===o.l)?' on':'';
+    h+='<div class="opt'+sl+'" data-l="'+esc(o.l)+'" data-t="'+o.t+'">'+esc(o.l)+'</div>';
   }
+  var ek=mi+':'+ds;
+  if(ED[ek])h+='<div class="opt" data-a="rst" style="color:var(--dm);margin-top:6px">元に戻す</div>';
+  $('moC').innerHTML=h;$('mo').classList.add('v');
+  $('moC').onclick=function(ev){
+    var el=ev.target;while(el&&!el.classList.contains('opt'))el=el.parentElement;
+    if(!el)return;
+    if(el.dataset.a==='rst')delete ED[ek];
+    else ED[ek]={l:el.dataset.l,t:el.dataset.t};
+    $('mo').classList.remove('v');genT();
+  };
+});
+$('mo').addEventListener('click',function(e){if(e.target===$('mo'))$('mo').classList.remove('v')});
 
-  // ===== GENERATE TABLE =====
-  var curMonth='2026-03';
-  function genTable(){
-    if(!PAT.length||!MEM.length){toast('パターンとメンバーを設定してください');return;}
-    curMonth=$('inpMonth').value;
-    var parts=curMonth.split('-');
-    var y=parseInt(parts[0]),m=parseInt(parts[1]);
-    var dim=new Date(y,m,0).getDate();
-    var today=dk(new Date());
-    $('printTitle').textContent=y+'年'+m+'月 勤務一覧表';
-    var dowN=['日','月','火','水','木','金','土'];
-    var h='<table class="roster"><thead><tr class="date-row"><th rowspan="2" style="min-width:56px">氏名</th>';
-    for(var d=1;d<=dim;d++){
-      var ds=y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-      h+='<th'+(ds===today?' class="today-col"':'')+'>'+d+'</th>';
-    }
-    h+='</tr><tr class="dow-row">';
-    for(var d=1;d<=dim;d++){
-      var date=new Date(y,m-1,d);
-      var dow=date.getDay();
-      var ds=dk(date);
-      var cls=dow===0?'sun':dow===6?'sat':'';
-      h+='<th class="'+cls+(ds===today?' today-col':'')+'">'+dowN[dow]+'</th>';
-    }
-    h+='</tr></thead><tbody>';
-    for(var mi=0;mi<MEM.length;mi++){
-      h+='<tr><td class="name-cell">'+esc(MEM[mi].name)+'</td>';
-      for(var d=1;d<=dim;d++){
-        var date=new Date(y,m-1,d);
-        var ds=dk(date);
-        var dow=date.getDay();
-        var shift=getShift(mi,ds);
-        var cls=shift?shift.type:'';
-        if(shift&&shift.edited)cls+=' edited';
-        if(dow===0)cls+=' sun-col';
-        if(dow===6)cls+=' sat-col';
-        if(ds===today)cls+=' today-col';
-        var label=shift?shift.label:'';
-        h+='<td class="'+cls+'" data-mi="'+mi+'" data-ds="'+ds+'">'+label+'</td>';
-      }
-      h+='</tr>';
-    }
-    h+='</tbody></table>';
-    $('rosterWrap').innerHTML=h;
-
-    // Attach click events via delegation
-    $('rosterWrap').onclick=function(e){
-      var td=e.target.closest('td[data-mi]');
-      if(td) editCell(parseInt(td.dataset.mi), td.dataset.ds);
-    };
+// === PATTERN ===
+$('bAR').addEventListener('click',function(){
+  var n=parseInt($('aN').value);if(isNaN(n))return;
+  PAT.push({num:n,tomari:$('aT').value==='1',rest:+$('aR').value,yobi:$('aY').checked});
+  $('aN').value='';$('aY').checked=false;render();
+});
+$('bQ').addEventListener('click',function(){
+  var raw=$('qA').value.trim();if(!raw)return;
+  var items=raw.split(/[,、\s]+/).filter(Boolean),res=[];
+  for(var i=0;i<items.length;i++){
+    var mt=items[i].match(/^(\d+)(t?)(r(\d))?(y?)$/);
+    if(!mt){toast('エラー: '+items[i]);return}
+    res.push({num:+mt[1],tomari:mt[2]==='t',rest:mt[4]?+mt[4]:0,yobi:mt[5]==='y'});
   }
+  PAT=res;render();toast(PAT.length+'行路 読み込み');
+});
 
-  // ===== EDIT CELL =====
-  function editCell(mi,ds){
-    var modal=$('modal'),c=$('modalC');
-    var nums={};
-    for(var i=0;i<PAT.length;i++) nums[PAT[i].num]=true;
-    var numList=Object.keys(nums).map(Number);
-    var opts=[];
-    for(var i=0;i<numList.length;i++) opts.push({l:String(numList[i]),t:'work'});
-    opts.push({l:'ー',t:'ake'});
-    opts.push({l:'◯',t:'off'});
-    opts.push({l:'予',t:'yobi'});
-    var cur=getShift(mi,ds);
-    var h='<h3>'+esc(MEM[mi].name)+' — '+ds+'</h3><div class="mo-os">';
-    for(var i=0;i<opts.length;i++){
-      var o=opts[i];
-      var sel=(cur&&cur.label===o.l)?' sel':'';
-      h+='<div class="mo-o'+sel+'" data-l="'+esc(o.l)+'" data-t="'+o.t+'">'+esc(o.l)+'</div>';
-    }
-    var ek=mi+':'+ds;
-    if(EDITS[ek]){
-      h+='<div class="mo-o" data-action="reset" style="color:var(--dm);margin-top:8px">元に戻す</div>';
-    }
-    h+='</div>';
-    c.innerHTML=h;
-    modal.classList.remove('hidden');
-
-    c.onclick=function(e){
-      var el=e.target.closest('.mo-o');
-      if(!el)return;
-      if(el.dataset.action==='reset'){
-        delete EDITS[ek];
-      } else {
-        EDITS[ek]={label:el.dataset.l,type:el.dataset.t};
-      }
-      modal.classList.add('hidden');
-      genTable();
-    };
-    modal.onclick=function(e){
-      if(e.target===modal) modal.classList.add('hidden');
-    };
-  }
-
-  // ===== PATTERN OPS =====
-  function addRoute(){
-    var num=parseInt($('aN').value);
-    if(isNaN(num))return;
-    PAT.push({num:num,tomari:$('aT').value==='1',rest:parseInt($('aR').value),yobi:$('aY').checked});
-    $('aN').value='';$('aY').checked=false;
-    save();render();
-  }
-  function removeRoute(i){PAT.splice(i,1);save();render();}
-  function moveRoute(i,d){var j=i+d;if(j<0||j>=PAT.length)return;var tmp=PAT[i];PAT[i]=PAT[j];PAT[j]=tmp;save();render();}
-
-  function doQuick(){
-    var raw=$('qArea').value.trim();
-    if(!raw)return;
-    var items=raw.split(/[,、\s]+/).filter(Boolean);
-    var result=[];
-    for(var i=0;i<items.length;i++){
-      var mt=items[i].match(/^(\d+)(t?)(r(\d))?(y?)$/);
-      if(!mt){toast('解析エラー: "'+items[i]+'"');return;}
-      result.push({num:parseInt(mt[1]),tomari:mt[2]==='t',rest:mt[4]?parseInt(mt[4]):0,yobi:mt[5]==='y'});
-    }
-    PAT=result;save();render();
-    toast(PAT.length+'行路 読み込み完了');
-  }
-
-  // ===== MEMBER OPS =====
-  function addMember(){
-    var name=$('mName').value.trim();
-    if(!name){toast('名前を入力');return;}
-    MEM.push({name:name,startDate:$('mStart').value,startRouteIdx:parseInt($('mRoute').value)||0});
-    $('mName').value='';
-    save();render();
-  }
-  function removeMember(i){MEM.splice(i,1);save();render();}
-  function moveMember(i,d){var j=i+d;if(j<0||j>=MEM.length)return;var tmp=MEM[i];MEM[i]=MEM[j];MEM[j]=tmp;save();render();}
-
-  // ===== RENDER =====
-  function render(){
-    renderRL();renderML();updateSel();updateH();
-    if(PAT.length&&MEM.length){$('tblE').classList.add('hidden');$('tblR').classList.remove('hidden');}
-    else{$('tblE').classList.remove('hidden');$('tblR').classList.add('hidden');}
-  }
-
-  function updateH(){
-    var s=$('hSub'),parts=[];
-    if(PAT.length){parts.push(PAT.length+'行路/'+expand().length+'日周期');}
-    if(MEM.length){parts.push(MEM.length+'名');}
-    s.textContent=parts.length?parts.join(' · '):'パターン・メンバー未設定';
-  }
-
-  function updateSel(){
-    var sel=$('mRoute');
-    sel.innerHTML=PAT.length
-      ?PAT.map(function(p,i){return '<option value="'+i+'">'+p.num+'</option>';}).join('')
-      :'<option value="0">—</option>';
-  }
-
-  function renderML(){
-    var el=$('memList');
-    if(!MEM.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--dm)">メンバーなし</div>';return;}
-    el.innerHTML=MEM.map(function(m,i){
-      var rName=PAT[m.startRouteIdx]?PAT[m.startRouteIdx].num:'?';
-      return '<div class="mi"><div class="nm">'+esc(m.name)+'</div><div class="info">開始:'+m.startDate+' / 行路'+rName+'</div>'
-        +'<button data-action="mm" data-i="'+i+'" data-d="-1">▲</button>'
-        +'<button data-action="mm" data-i="'+i+'" data-d="1">▼</button>'
-        +'<button class="x" data-action="rm" data-i="'+i+'">✕</button></div>';
-    }).join('');
-  }
-
-  function renderRL(){
-    var el=$('rList');
-    if(!PAT.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--dm)">パターン未設定</div>';return;}
-    el.innerHTML=PAT.map(function(p,i){
-      var tags=p.tomari?'<span class="chip c-tom">泊</span>':'<span class="chip c-nik">日勤</span>';
-      if(p.rest)tags+='<span class="chip c-rst">◯×'+p.rest+'</span>';
-      if(p.yobi)tags+='<span class="chip c-yob">休日予</span>';
-      return '<div class="mi"><div class="nm" style="color:var(--ac)">'+p.num+'</div><div class="chips">'+tags+'</div>'
-        +'<button data-action="mr" data-i="'+i+'" data-d="-1">▲</button>'
-        +'<button data-action="mr" data-i="'+i+'" data-d="1">▼</button>'
-        +'<button class="x" data-action="rr" data-i="'+i+'">✕</button></div>';
-    }).join('');
-  }
-
-  // ===== IO =====
-  function doExport(){
-    if(!PAT.length&&!MEM.length){toast('データなし');return;}
-    var data=JSON.stringify({pattern:PAT,members:MEM,edits:EDITS},null,2);
-    var blob=new Blob([data],{type:'application/json'});
-    var a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download='交番シフト_'+dk(new Date())+'.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
-    toast('ダウンロード完了');
-  }
-
-  function doImport(){
-    var file=$('impFile').files[0];
-    if(!file){toast('ファイルを選択');return;}
-    var reader=new FileReader();
-    reader.onload=function(e){
-      try{
-        var d=JSON.parse(e.target.result);
-        if(d.pattern) PAT=d.pattern.map(function(x){return {num:parseInt(x.num),tomari:!!x.tomari,rest:parseInt(x.rest)||0,yobi:!!x.yobi};});
-        if(d.members) MEM=d.members.map(function(x){return {name:x.name,startDate:x.startDate,startRouteIdx:parseInt(x.startRouteIdx)||0};});
-        if(d.edits) EDITS=d.edits;
-        save();render();
-        toast('読み込み完了: '+PAT.length+'行路 / '+MEM.length+'名');
-      }catch(err){
-        toast('JSONエラー: '+err);
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  // ===== PERSISTENCE =====
-  function save(){
-    try{localStorage.setItem('shift_data',JSON.stringify({p:PAT,m:MEM,e:EDITS}));}catch(e){}
-  }
-  function load(){
-    try{
-      var raw=localStorage.getItem('shift_data');
-      if(raw){
-        var d=JSON.parse(raw);
-        if(d.p)PAT=d.p;if(d.m)MEM=d.m;if(d.e)EDITS=d.e;
-      }
-    }catch(e){}
-  }
-
-  // ===== TABS =====
-  var tabDefs=[
-    {id:'tbl',label:'一覧表'},
-    {id:'mem',label:'メンバー'},
-    {id:'pat',label:'パターン'},
-    {id:'io',label:'入出力'}
-  ];
-  var tabBar=$('tabBar');
-  tabBar.innerHTML=tabDefs.map(function(t,i){
-    return '<div class="tab'+(i===0?' on':'')+'" data-t="'+t.id+'">'+t.label+'</div>';
-  }).join('');
-
-  tabBar.addEventListener('click',function(e){
-    var tab=e.target.closest('.tab');
-    if(!tab)return;
-    tabBar.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
-    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
-    tab.classList.add('on');
-    $('p-'+tab.dataset.t).classList.add('on');
-  });
-
-  // ===== EVENT DELEGATION =====
-  // Table buttons
-  $('btnGen').addEventListener('click', genTable);
-  $('btnPrint').addEventListener('click', function(){ window.print(); });
-  $('btnAddMem').addEventListener('click', addMember);
-  $('btnAddRoute').addEventListener('click', addRoute);
-  $('btnQuick').addEventListener('click', doQuick);
-  $('btnExport').addEventListener('click', doExport);
-  $('btnImport').addEventListener('click', doImport);
-
-  // Member list delegation
-  $('memList').addEventListener('click',function(e){
-    var btn=e.target.closest('button[data-action]');
-    if(!btn)return;
-    var i=parseInt(btn.dataset.i);
-    if(btn.dataset.action==='mm') moveMember(i,parseInt(btn.dataset.d));
-    if(btn.dataset.action==='rm') removeMember(i);
-  });
-
-  // Route list delegation
-  $('rList').addEventListener('click',function(e){
-    var btn=e.target.closest('button[data-action]');
-    if(!btn)return;
-    var i=parseInt(btn.dataset.i);
-    if(btn.dataset.action==='mr') moveRoute(i,parseInt(btn.dataset.d));
-    if(btn.dataset.action==='rr') removeRoute(i);
-  });
-
-  // ===== INIT =====
-  load();
+// Pattern list actions
+$('pL').addEventListener('click',function(e){
+  var b=e.target;while(b&&!b.dataset.a)b=b.parentElement;
+  if(!b)return;var i=+b.dataset.i;
+  if(b.dataset.a==='dr'){PAT.splice(i,1)}
+  else if(b.dataset.a==='up'&&i>0){var t=PAT[i];PAT[i]=PAT[i-1];PAT[i-1]=t}
+  else if(b.dataset.a==='dn'&&i<PAT.length-1){var t2=PAT[i];PAT[i]=PAT[i+1];PAT[i+1]=t2}
   render();
+});
 
-})();
+// === MEMBERS ===
+$('bAM').addEventListener('click',function(){
+  var nm=$('mN').value.trim();if(!nm){toast('名前を入力');return}
+  MEM.push({nm:nm,sd:$('mS').value,ri:+$('mR').value||0});
+  $('mN').value='';render();
+});
+$('mL').addEventListener('click',function(e){
+  var b=e.target;while(b&&!b.dataset.a)b=b.parentElement;
+  if(!b)return;var i=+b.dataset.i;
+  if(b.dataset.a==='dr'){MEM.splice(i,1)}
+  else if(b.dataset.a==='up'&&i>0){var t=MEM[i];MEM[i]=MEM[i-1];MEM[i-1]=t}
+  else if(b.dataset.a==='dn'&&i<MEM.length-1){var t2=MEM[i];MEM[i]=MEM[i+1];MEM[i+1]=t2}
+  render();
+});
+
+// === TABLE BUTTONS ===
+$('bG').addEventListener('click',genT);
+$('bP').addEventListener('click',function(){window.print()});
+
+// === IO ===
+$('bEx').addEventListener('click',function(){
+  if(!PAT.length&&!MEM.length){toast('データなし');return}
+  var j=JSON.stringify({pattern:PAT,members:MEM,edits:ED},null,2);
+  var b=new Blob([j],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download='shift_'+dk(new Date())+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  toast('ダウンロード完了');
+});
+$('bIm').addEventListener('click',function(){
+  var f=$('iF').files[0];if(!f){toast('ファイルを選択');return}
+  var r=new FileReader();
+  r.onload=function(e){
+    try{
+      var d=JSON.parse(e.target.result);
+      if(d.pattern)PAT=d.pattern.map(function(x){return{num:+x.num,tomari:!!x.tomari,rest:+x.rest||0,yobi:!!x.yobi}});
+      if(d.members)MEM=d.members.map(function(x){return{nm:x.nm||x.name,sd:x.sd||x.startDate,ri:+(x.ri!=null?x.ri:x.startRouteIdx)||0}});
+      if(d.edits)ED=d.edits;
+      render();toast(PAT.length+'行路 / '+MEM.length+'名 読み込み');
+    }catch(err){toast('JSONエラー')}
+  };
+  r.readAsText(f);
+});
+
+// === TABS ===
+$('tabs').addEventListener('click',function(e){
+  var b=e.target;if(b.tagName!=='BUTTON')return;
+  var pi=+b.dataset.p;
+  var btns=$('tabs').querySelectorAll('button');
+  for(var i=0;i<btns.length;i++){btns[i].classList.toggle('on',i===pi)}
+  for(var j=0;j<4;j++){var pg=$('pg'+j);if(pg)pg.classList.toggle('on',j===pi)}
+});
+
+// === RENDER ===
+function render(){
+  // Header
+  var ps=[];
+  if(PAT.length)ps.push(PAT.length+'行路/'+expand().length+'日周期');
+  if(MEM.length)ps.push(MEM.length+'名');
+  $('sub').textContent=ps.length?ps.join(' · '):'未設定';
+
+  // Table state
+  if(PAT.length&&MEM.length){$('tE').style.display='none';$('tR').style.display=''}
+  else{$('tE').style.display='';$('tR').style.display='none'}
+
+  // Member route selector
+  $('mR').innerHTML=PAT.length?PAT.map(function(p,i){return'<option value="'+i+'">'+p.num+'</option>'}).join(''):'<option>—</option>';
+
+  // Pattern list
+  if(!PAT.length){$('pL').innerHTML='<div class="empty">パターン未設定</div>'}
+  else{$('pL').innerHTML=PAT.map(function(p,i){
+    var tg=p.tomari?'<span class="tag t1">泊</span>':'<span class="tag t2">日勤</span>';
+    if(p.rest)tg+='<span class="tag t3">◯×'+p.rest+'</span>';
+    if(p.yobi)tg+='<span class="tag t4">休日予</span>';
+    return'<div class="card" style="display:flex;align-items:center;gap:6px">'
+      +'<strong style="color:var(--ac);font-size:16px;min-width:28px">'+p.num+'</strong>'
+      +'<div style="flex:1">'+tg+'</div>'
+      +'<button data-a="up" data-i="'+i+'" style="background:none;border:none;color:var(--dm);cursor:pointer;padding:4px;font-size:13px">▲</button>'
+      +'<button data-a="dn" data-i="'+i+'" style="background:none;border:none;color:var(--dm);cursor:pointer;padding:4px;font-size:13px">▼</button>'
+      +'<button data-a="dr" data-i="'+i+'" style="background:none;border:none;color:var(--rd);cursor:pointer;padding:4px;font-size:16px">✕</button>'
+      +'</div>';
+  }).join('')}
+
+  // Member list
+  if(!MEM.length){$('mL').innerHTML='<div class="empty">メンバーなし</div>'}
+  else{$('mL').innerHTML=MEM.map(function(m,i){
+    var rn=PAT[m.ri]?PAT[m.ri].num:'?';
+    return'<div class="card" style="display:flex;align-items:center;gap:6px">'
+      +'<strong style="min-width:50px">'+esc(m.nm)+'</strong>'
+      +'<span style="font-size:11px;color:var(--dm);flex:1">'+m.sd+' / '+rn+'番</span>'
+      +'<button data-a="up" data-i="'+i+'" style="background:none;border:none;color:var(--dm);cursor:pointer;padding:4px;font-size:13px">▲</button>'
+      +'<button data-a="dn" data-i="'+i+'" style="background:none;border:none;color:var(--dm);cursor:pointer;padding:4px;font-size:13px">▼</button>'
+      +'<button data-a="dr" data-i="'+i+'" style="background:none;border:none;color:var(--rd);cursor:pointer;padding:4px;font-size:16px">✕</button>'
+      +'</div>';
+  }).join('')}
+}
+
+render();
+})()}catch(err){document.body.innerHTML='<div style="padding:20px;color:red;font-size:14px">エラー: '+err.message+'<br><br>'+err.stack+'</div>'}
 </script>
 </body>
 </html>
